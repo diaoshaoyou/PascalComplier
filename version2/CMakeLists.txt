@@ -43,7 +43,7 @@ add_executable(
         ${SOURCE_FILES}
         ${FLEX_spc_lexer_OUTPUTS}
         ${BISON_spc_parser_OUTPUTS}
-        src/utils/ast.hpp src/codegen/program.cpp src/codegen/decl.cpp src/codegen/type.cpp src/codegen/expr.cpp src/codegen/identifier.cpp src/codegen/stmt.cpp)
+        src/codegen/program.cpp src/codegen/decl.cpp src/codegen/type.cpp src/codegen/expr.cpp src/codegen/identifier.cpp src/codegen/stmt.cpp)
 target_include_directories(${CMAKE_PROJECT_NAME}
         PRIVATE
         .

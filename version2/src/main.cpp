@@ -30,10 +30,16 @@
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetMachine.h>
-#include "utils/ast.hpp"
 #include "utils/ASTvis.hpp"
 #include "codegen/codegen_context.hpp"
 #include "parser.hpp"
+#include "ast/base.hpp"
+#include "ast/decl.hpp"
+#include "ast/expr.hpp"
+#include "ast/identifier.hpp"
+#include "ast/program.hpp"
+#include "ast/stmt.hpp"
+#include "ast/type.hpp"
 
 extern FILE *yyin;
 std::shared_ptr<spc::ProgramNode> program;

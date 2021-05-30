@@ -1,3 +1,6 @@
+# Pascal-Compiler
+A simple pascal compiler using flex and bison as frontend and LLVM as backend. Project for Compiler Principle course in ZJU.
+
 ## Functionalities
 
 - Support types
@@ -18,14 +21,6 @@
   - `writeln`/`write`: Integer, Longint, Real, Char, String
     - *Variable argument number*
     - Implemented by `printf`
-  - `readln`/`read`: Integer, Longint, Real, Char, String
-    - *Variable argument number*
-    - Implemented by `scanf`
-    - Warning: `readln` of String will behave the same as `gets` in C, i.e. reads all the inputs until end of line. So if a String variable is not the last argument of readln, the rest of argument will not be read in this line. The compiler will emit a warning when recognizing this
-  - `concat`: Integer, Longint, Real, Char, String -> String
-    - *Variable argument number*
-    - Description: concatenates all the arguments into a String
-    - Implemented by `sprintf`
   - `abs`: Integer, Real -> Integer, Real
     - Implemented by `abs` for Integer and `fabs` for Real
   - `val`: String -> Integer
@@ -118,7 +113,7 @@
 
 
 5. Result
-   The result will in version1/test/<file name>  for instance, "arr.pas" results will in version1/test/arr/
+   The result will in version1/test/<file name>  for instance, "arr.pas" result will in version1/test/arr/
 
 6. Notes
 llvm optimization: codegen_context.hpp, line:420-432

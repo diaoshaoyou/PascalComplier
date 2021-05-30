@@ -1,4 +1,4 @@
-//To get AST graph in .tex pattern
+﻿//To get AST graph in .tex pattern
 #include "ASTvis.hpp"
 
 #include <fstream>
@@ -7,13 +7,12 @@
 
 using namespace spc;
 
-void spc::ASTvis::travAST(const std::shared_ptr<ProgramNode>& prog)
+void ASTvis::travAST(const std::shared_ptr<ProgramNode>& prog)
 {
 
     of << texHeader;
-    //travProgram(prog);
     of << "\\node {Program: " << prog->getName() << "}\n";
-    int tmp=travRoutineBody(spc::cast_node<spc::BaseRoutineNode>(prog));
+    travRoutineBody(cast_node<BaseRoutineNode>(prog));
     of << texTail;
 
     //std::cout << "debug info:\n" << prog->getName() << std::endl;
@@ -21,44 +20,38 @@ void spc::ASTvis::travAST(const std::shared_ptr<ProgramNode>& prog)
     return;
 }
 
-/*int spc::ASTvis::travProgram(const std::shared_ptr<spc::ProgramNode>& prog)
-{
-    of << "\\node {Program: " << prog->getName() << "}\n";
-    return travRoutineBody(spc::cast_node<spc::BaseRoutineNode>(prog));
-}*/
-
-int spc::ASTvis::travRoutineBody(const std::shared_ptr<spc::BaseRoutineNode>& prog)
+int ASTvis::travRoutineBody(const std::shared_ptr<BaseRoutineNode>& prog)
 {
     int tmp = 0, lines = 6;
-    of << "child { node {CONST}";
+    of << "child { node {CONST}\n";
     tmp = travCONST(prog->header->constList);
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     // std::cout << "debug info: CONST part over" << std::endl;
 
-    of << "child { node {TYPE}";
+    of << "child { node {TYPE}\n";
     tmp = travTYPE(prog->header->typeList);
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     // std::cout << "debug info: TYPE part over" << std::endl;
 
-    of << "child { node {VAR}";
+    of << "child { node {VAR}\n";
     tmp = travVAR(prog->header->varList);
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     // std::cout << "debug info: VAR part over" << std::endl;
 
-    of << "child { node {PROC or FUNC}";
+    of << "child { node {PROC or FUNC}\n";
     tmp = travSubprocList(prog->header->subroutineList);
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     // std::cout << "debug info: PROC part over" << std::endl;
 
-    of << "child { node {STMT}";
+    of << "child { node {STMT}\n";
     tmp = travCompound(prog->body);
     of << "}\n";
     for (int i=0; i<tmp; ++i) of << texNone;
@@ -68,23 +61,23 @@ int spc::ASTvis::travRoutineBody(const std::shared_ptr<spc::BaseRoutineNode>& pr
     return lines;
 }
 
-int spc::ASTvis::travCONST(const std::shared_ptr<spc::ConstDeclList>& const_declListAST)
+int ASTvis::travCONST(const std::shared_ptr<ConstDeclList>& const_declListAST)
 {
     std::list<std::shared_ptr<ConstDeclNode>>& constList(const_declListAST->getChildren());
     int lines = constList.size();
 
     for (auto &p : constList) {
-        of << "child { node {";
+        of << "   child { node {";
         of << p->name->name << " : ";
         switch (p->val->type) {
-            case spc::Type::Void    : of << "VOID"   ; break;
-            case spc::Type::Array   : of << "ARRAY"  ; break;
-            case spc::Type::Record  : of << "RECORD" ; break;
-            case spc::Type::Bool : of << "BOOLEAN"; break;
-            case spc::Type::Int : of << "INTEGER"; break;
-            case spc::Type::Long : of << "LONG"; break;
-            case spc::Type::Real    : of << "REAL"   ; break;
-            case spc::Type::String  : of << "STRING" ; break;
+            case Type::Void    : of << "VOID"   ; break;
+            case Type::Array   : of << "ARRAY"  ; break;
+            case Type::Record  : of << "RECORD" ; break;
+            case Type::Bool : of << "BOOLEAN"; break;
+            case Type::Int : of << "INTEGER"; break;
+            case Type::Long : of << "LONG"; break;
+            case Type::Real    : of << "REAL"   ; break;
+            case Type::String  : of << "STRING" ; break;
             default : of << "ERROR"; break;
         }
         of << "}}\n";
@@ -92,47 +85,47 @@ int spc::ASTvis::travCONST(const std::shared_ptr<spc::ConstDeclList>& const_decl
     return lines;
 }
 
-int spc::ASTvis::travTYPE(const std::shared_ptr<spc::TypeDeclList>& type_declListAST)
+int ASTvis::travTYPE(const std::shared_ptr<TypeDeclList>& type_declListAST)
 {
     std::list<std::shared_ptr<TypeDeclNode>>& typeList(type_declListAST->getChildren());
     int lines = typeList.size();
 
     for (auto &p : typeList) {
-        of << "child { node {";
+        of << "   child { node {";
         of << p->name->name << " : ";
         switch (p->type->type) {
-            case spc::Type::Void    : of << "VOID"   ; break;
-            case spc::Type::Array   : of << "ARRAY"  ; break;
-            case spc::Type::Record  : of << "RECORD" ; break;
-            case spc::Type::Bool : of << "BOOLEAN"; break;
-            case spc::Type::Int : of << "INTEGER"; break;
-            case spc::Type::Long : of << "LONG"; break;
-            case spc::Type::Real    : of << "REAL"   ; break;
-            case spc::Type::String  : of << "STRING" ; break;
+            case Type::Void    : of << "VOID"   ; break;
+            case Type::Array   : of << "ARRAY"  ; break;
+            case Type::Record  : of << "RECORD" ; break;
+            case Type::Bool : of << "BOOLEAN"; break;
+            case Type::Int : of << "INTEGER"; break;
+            case Type::Long : of << "LONG"; break;
+            case Type::Real    : of << "REAL"   ; break;
+            case Type::String  : of << "STRING" ; break;
             default : of << "ERROR"; break;
         }
         of << "}}\n";
     }
     return lines;
 }
-int spc::ASTvis::travVAR(const std::shared_ptr<spc::VarDeclList>& var_declListAST)
+int ASTvis::travVAR(const std::shared_ptr<VarDeclList>& var_declListAST)
 {
     std::list<std::shared_ptr<VarDeclNode>>& varList(var_declListAST->getChildren());
     int lines = varList.size();
 
     for (auto &p : varList) {
-        of << "child { node {";
+        of << "   child { node {";
         of << p->name->name << " : ";
         switch (p->type->type) {
-            case spc::Type::Void    : of << "VOID"   ; break;
-            case spc::Type::Array   : of << "ARRAY"  ; break;
-            case spc::Type::Record  : of << "RECORD" ; break;
-            case spc::Type::Bool : of << "BOOLEAN"; break;
-            case spc::Type::Int : of << "INTEGER"; break;
-            case spc::Type::Long : of << "LONG"; break;
-            case spc::Type::Real    : of << "REAL"   ; break;
-            case spc::Type::String  : of << "STRING" ; break;
-            case spc::Type::Alias  : of << "ALIAS" ; break;
+            case Type::Void    : of << "VOID"   ; break;
+            case Type::Array   : of << "ARRAY"  ; break;
+            case Type::Record  : of << "RECORD" ; break;
+            case Type::Bool : of << "BOOLEAN"; break;
+            case Type::Int : of << "INTEGER"; break;
+            case Type::Long : of << "LONG"; break;
+            case Type::Real    : of << "REAL"   ; break;
+            case Type::String  : of << "STRING" ; break;
+            case Type::Alias  : of << "ALIAS" ; break;
             default : of << "ERROR"; break;
         }
         of << "}}\n";
@@ -140,38 +133,38 @@ int spc::ASTvis::travVAR(const std::shared_ptr<spc::VarDeclList>& var_declListAS
     return lines;
 }
 
-int spc::ASTvis::travSubprocList(const std::shared_ptr<spc::RoutineList>& subProc_declListAST)
+int ASTvis::travSubprocList(const std::shared_ptr<RoutineList>& subProc_declListAST)
 {
-    std::list<std::shared_ptr<spc::RoutineNode>>& progList(subProc_declListAST->getChildren());
+    std::list<std::shared_ptr<RoutineNode>>& progList(subProc_declListAST->getChildren());
     int tmp = 0, lines = progList.size();
 
     for (auto &p : progList) {
         tmp = travSubproc(p);
-        for (int i=0; i<tmp; ++i) of << texNone;
+        for (int i=0; i<tmp; ++i) of << "   " << texNone;
         lines += tmp;
     }
     return lines;
 }
 
-int spc::ASTvis::travSubproc(const std::shared_ptr<spc::RoutineNode>& subProc_AST)
+int ASTvis::travSubproc(const std::shared_ptr<RoutineNode>& subProc_AST)
 {
     int lines = 0;
-    of << "child { node {";
-    if (subProc_AST->retType->type == spc::Type::Void )
+    of << "   child { node {";
+    if (subProc_AST->retType->type == Type::Void )
         of << "PROCEDURE: " << subProc_AST->getName();
     else
     {
         of << "FUNCTION: " << subProc_AST->getName();
-        of << "$ ---- $RET$-$TYPE: ";
+        of << "$ -- $RET$-$TYPE: ";
         switch (subProc_AST->retType->type) {
-            case spc::Type::Void    : of << "VOID"   ; break;
-            case spc::Type::Array   : of << "ARRAY"  ; break;
-            case spc::Type::Record  : of << "RECORD" ; break;
-            case spc::Type::Bool : of << "BOOLEAN"; break;
-            case spc::Type::Int : of << "INTEGER"; break;
-            case spc::Type::Long : of << "LONG"; break;
-            case spc::Type::Real    : of << "REAL"   ; break;
-            case spc::Type::String  : of << "STRING" ; break;
+            case Type::Void    : of << "VOID"   ; break;
+            case Type::Array   : of << "ARRAY"  ; break;
+            case Type::Record  : of << "RECORD" ; break;
+            case Type::Bool : of << "BOOLEAN"; break;
+            case Type::Int : of << "INTEGER"; break;
+            case Type::Long : of << "LONG"; break;
+            case Type::Real    : of << "REAL"   ; break;
+            case Type::String  : of << "STRING" ; break;
             default : of << "ERROR"; break;
         }
     }
@@ -179,68 +172,68 @@ int spc::ASTvis::travSubproc(const std::shared_ptr<spc::RoutineNode>& subProc_AS
     std::list<std::shared_ptr<ParamNode>>& paramAsts
             = subProc_AST->params->getChildren();
     {
-        of << "$ ---- $PARAMS: ";
+        of << "$ -- $PARAMS: ";
         for (auto &p : paramAsts) {
             of << p->name->name << " $-$ ";
             switch (p->type->type) {
-                case spc::Type::Void    : of << "VOID"   ; break;
-                case spc::Type::Array   : of << "ARRAY"  ; break;
-                case spc::Type::Record  : of << "RECORD" ; break;
-                case spc::Type::Bool : of << "BOOLEAN"; break;
-                case spc::Type::Int : of << "INTEGER"; break;
-                case spc::Type::Long : of << "LONG"; break;
-                case spc::Type::Real    : of << "REAL"   ; break;
-                case spc::Type::String  : of << "STRING" ; break;
+                case Type::Void    : of << "VOID"   ; break;
+                case Type::Array   : of << "ARRAY"  ; break;
+                case Type::Record  : of << "RECORD" ; break;
+                case Type::Bool : of << "BOOLEAN"; break;
+                case Type::Int : of << "INTEGER"; break;
+                case Type::Long : of << "LONG"; break;
+                case Type::Real    : of << "REAL"   ; break;
+                case Type::String  : of << "STRING" ; break;
                 default : of << "ERROR"; break;
             }
         }
     }
-    of << "}";
-    lines = travRoutineBody(spc::cast_node<spc::BaseRoutineNode>(subProc_AST));
+    of << "}\n";
+    lines = travRoutineBody(cast_node<BaseRoutineNode>(subProc_AST));
     of << "}\n";
     return lines;
 }
 
-int spc::ASTvis::travCompound(const std::shared_ptr<spc::CompoundStmtNode>& compound_declListAST)
+int ASTvis::travCompound(const std::shared_ptr<CompoundStmtNode>& compound_declListAST)
 {
     if (compound_declListAST == nullptr) return 0;
-    std::list<std::shared_ptr<spc::StmtNode>>& stmtList(compound_declListAST->getChildren());
+    std::list<std::shared_ptr<StmtNode>>& stmtList(compound_declListAST->getChildren());
     int tmp = 0, lines = stmtList.size();
     for (auto &p : stmtList) {
         tmp = 0;
-        if (spc::is_ptr_of<spc::IfStmtNode>(p))
+        if (is_ptr_of<IfStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::IfStmtNode>(p));
+            tmp += travStmt(cast_node<IfStmtNode>(p));
             // std::cout << "debug info: IF over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::WhileStmtNode>(p))
+        else if (is_ptr_of<WhileStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::WhileStmtNode>(p));
+            tmp += travStmt(cast_node<WhileStmtNode>(p));
             // std::cout << "debug info: WHILE over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::ForStmtNode>(p))
+        else if (is_ptr_of<ForStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::ForStmtNode>(p));
+            tmp += travStmt(cast_node<ForStmtNode>(p));
             // std::cout << "debug info: FOR over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::RepeatStmtNode>(p))
+        else if (is_ptr_of<RepeatStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::RepeatStmtNode>(p));
+            tmp += travStmt(cast_node<RepeatStmtNode>(p));
             // std::cout << "debug info: REPEAT over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::ProcStmtNode>(p))
+        else if (is_ptr_of<ProcStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::ProcStmtNode>(p));
+            tmp += travStmt(cast_node<ProcStmtNode>(p));
             // std::cout << "debug info: PROC over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::AssignStmtNode>(p))
+        else if (is_ptr_of<AssignStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::AssignStmtNode>(p));
+            tmp += travStmt(cast_node<AssignStmtNode>(p));
             // std::cout << "debug info: ASSIGN over" << std::endl;
         }
-        else if (spc::is_ptr_of<spc::CaseStmtNode>(p))
+        else if (is_ptr_of<CaseStmtNode>(p))
         {
-            tmp += travStmt(spc::cast_node<spc::CaseStmtNode>(p));
+            tmp += travStmt(cast_node<CaseStmtNode>(p));
             // std::cout << "debug info: CASE over" << std::endl;
         }
         lines += tmp;
@@ -248,10 +241,10 @@ int spc::ASTvis::travCompound(const std::shared_ptr<spc::CompoundStmtNode>& comp
     return lines;
 }
 
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::CaseStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<CaseStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
-    std::list<std::shared_ptr<spc::CaseBranchNode>>& stmtList(p_stmp->branches);
+    std::list<std::shared_ptr<CaseBranchNode>>& stmtList(p_stmp->branches);
     int tmp = 0, lines = stmtList.size();
     of << "child { node {CASE Statment case expr}\n";
     tmp = travExpr(p_stmp->expr);
@@ -263,10 +256,10 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::CaseStmtNode>&p_stmp)
     for (auto &p : stmtList)
     {
         std::string br;
-        if (spc::is_ptr_of<spc::IntegerNode>(p->branch))
-            br = std::to_string(spc::cast_node<IntegerNode>(p->branch)->val);
-        else if (spc::is_ptr_of<spc::IdentifierNode>(p->branch))
-            br = spc::cast_node<spc::IdentifierNode>(p->branch)->name;
+        if (is_ptr_of<IntegerNode>(p->branch))
+            br = std::to_string(cast_node<IntegerNode>(p->branch)->val);
+        else if (is_ptr_of<IdentifierNode>(p->branch))
+            br = cast_node<IdentifierNode>(p->branch)->name;
         of << "child { node {Case " + br + "}\n";
         tmp = travCompound(p->stmt);
         of << "}\n";
@@ -278,14 +271,14 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::CaseStmtNode>&p_stmp)
     return lines;
 }
 
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::StmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<StmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     of << "child { node {Base Statment}}\n";
     return 0;
 }
 // * done
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::IfStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<IfStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 0, lines = 3;
@@ -310,7 +303,7 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::IfStmtNode>&p_stmp)
 
     return lines;
 }
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::WhileStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<WhileStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 0, lines = 2;
@@ -326,7 +319,7 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::WhileStmtNode>&p_stmp)
     lines += tmp; tmp = 0;
     return lines;
 }
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::ForStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<ForStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -348,7 +341,7 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::ForStmtNode>&p_stmp)
 
     return lines;
 }
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::RepeatStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<RepeatStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 0, lines = 2;
@@ -365,7 +358,7 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::RepeatStmtNode>&p_stmp)
     // of << "}\n";
     return lines;
 }
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::ProcStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<ProcStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -376,7 +369,7 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::ProcStmtNode>&p_stmp)
     of << "}\n}\n";
     return lines;
 }
-int spc::ASTvis::travStmt(const std::shared_ptr<spc::AssignStmtNode>&p_stmp)
+int ASTvis::travStmt(const std::shared_ptr<AssignStmtNode>&p_stmp)
 {
     if (p_stmp == nullptr) return 0;
     int tmp = 2, lines = 0;
@@ -390,30 +383,30 @@ int spc::ASTvis::travStmt(const std::shared_ptr<spc::AssignStmtNode>&p_stmp)
     return lines;
 }
 
-int spc::ASTvis::travExpr(const std::shared_ptr<ExprNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<ExprNode>& expr)
 {
     int tmp = 0, lines = 0;
-    if (spc::is_ptr_of<spc::BinaryExprNode>(expr))
-        tmp += travExpr(spc::cast_node<spc::BinaryExprNode>(expr));
-    // tmp += travExpr(spc::cast_node<spc::UnaryExprNode>(expr));
-    else if (spc::is_ptr_of<spc::IdentifierNode>(expr))
-        tmp += travExpr(spc::cast_node<IdentifierNode>(expr));
-    else if (spc::is_ptr_of<spc::ConstValueNode>(expr))
-        tmp += travExpr(spc::cast_node<ConstValueNode>(expr));
-    else if (spc::is_ptr_of<spc::ArrayRefNode>(expr))
-        tmp += travExpr(spc::cast_node<spc::ArrayRefNode>(expr));
-    else if (spc::is_ptr_of<spc::RecordRefNode>(expr))
-        tmp += travExpr(spc::cast_node<spc::RecordRefNode>(expr));
-    else if (spc::is_ptr_of<spc::CustomProcNode>(expr))
-        tmp += travExpr(spc::cast_node<spc::CustomProcNode>(expr));
-    else if (spc::is_ptr_of<spc::SysProcNode>(expr))
-        tmp += travExpr(spc::cast_node<spc::SysProcNode>(expr));
+    if (is_ptr_of<BinaryExprNode>(expr))
+        tmp += travExpr(cast_node<BinaryExprNode>(expr));
+    // tmp += travExpr(cast_node<UnaryExprNode>(expr));
+    else if (is_ptr_of<IdentifierNode>(expr))
+        tmp += travExpr(cast_node<IdentifierNode>(expr));
+    else if (is_ptr_of<ConstValueNode>(expr))
+        tmp += travExpr(cast_node<ConstValueNode>(expr));
+    else if (is_ptr_of<ArrayRefNode>(expr))
+        tmp += travExpr(cast_node<ArrayRefNode>(expr));
+    else if (is_ptr_of<RecordRefNode>(expr))
+        tmp += travExpr(cast_node<RecordRefNode>(expr));
+    else if (is_ptr_of<CustomProcNode>(expr))
+        tmp += travExpr(cast_node<CustomProcNode>(expr));
+    else if (is_ptr_of<SysProcNode>(expr))
+        tmp += travExpr(cast_node<SysProcNode>(expr));
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     return lines;
 }
 
-int spc::ASTvis::travExpr(const std::shared_ptr<BinaryExprNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<BinaryExprNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 2;
@@ -421,21 +414,21 @@ int spc::ASTvis::travExpr(const std::shared_ptr<BinaryExprNode>& expr)
     of << "child { node {BINARY: ";
     switch (expr->op)
     {
-        case spc::BinaryOp::Eq: of << "==";break;
-        case spc::BinaryOp::Neq: of << "!=";break;
-        case spc::BinaryOp::Leq: of << "<=";break;
-        case spc::BinaryOp::Geq: of << ">=";break;
-        case spc::BinaryOp::Lt: of << "<";break;
-        case spc::BinaryOp::Gt: of << ">";break;
-        case spc::BinaryOp::Plus: of << "+";break;
-        case spc::BinaryOp::Minus: of << "-";break;
-        case spc::BinaryOp::Truediv: of << "/";break;
-        case spc::BinaryOp::Div: of << "//";break;
-        case spc::BinaryOp::Mod: of << "\\%";break;
-        case spc::BinaryOp::Mul: of << "*";break;
-        case spc::BinaryOp::Or:  of << "|";break;
-        case spc::BinaryOp::And: of << "&";break;
-        case spc::BinaryOp::Xor: of << "\\^";break;
+        case BinaryOp::Eq: of << "==";break;
+        case BinaryOp::Neq: of << "!=";break;
+        case BinaryOp::Leq: of << "<=";break;
+        case BinaryOp::Geq: of << ">=";break;
+        case BinaryOp::Lt: of << "<";break;
+        case BinaryOp::Gt: of << ">";break;
+        case BinaryOp::Plus: of << "+";break;
+        case BinaryOp::Minus: of << "-";break;
+        case BinaryOp::Truediv: of << "/";break;
+        case BinaryOp::Div: of << "//";break;
+        case BinaryOp::Mod: of << "\\%";break;
+        case BinaryOp::Mul: of << "*";break;
+        case BinaryOp::Or:  of << "|";break;
+        case BinaryOp::And: of << "&";break;
+        case BinaryOp::Xor: of << "\\^";break;
         default: of << "ERROR"; break;
     }
     of << "}\n";
@@ -449,7 +442,7 @@ int spc::ASTvis::travExpr(const std::shared_ptr<BinaryExprNode>& expr)
 
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::ConstValueNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<ConstValueNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -460,7 +453,7 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::ConstValueNode>& expr)
     of << "}\n}\n";
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::IdentifierNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<IdentifierNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -471,7 +464,7 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::IdentifierNode>& expr)
     of << "}\n}\n";
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::ArrayRefNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<ArrayRefNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -482,7 +475,7 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::ArrayRefNode>& expr)
     of << "}\n}\n";
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::RecordRefNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<RecordRefNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -493,13 +486,13 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::RecordRefNode>& expr)
     of << "}\n}\n";
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::ProcNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<ProcNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::CustomProcNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<CustomProcNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -510,7 +503,7 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::CustomProcNode>& expr)
     of << "}\n";
     return lines;
 }
-int spc::ASTvis::travExpr(const std::shared_ptr<spc::SysProcNode>& expr)
+int ASTvis::travExpr(const std::shared_ptr<SysProcNode>& expr)
 {
     if (expr == nullptr) return 0;
     int tmp = 0, lines = 0;
@@ -518,17 +511,17 @@ int spc::ASTvis::travExpr(const std::shared_ptr<spc::SysProcNode>& expr)
     of << "child { node {SysFunc: ";
     switch (expr->name)
     {
-        case spc::SysFunc::Read:   of << "read()"; break;
-        case spc::SysFunc::Write:  of << "write()"; break;
-        case spc::SysFunc::Writeln:of << "writeln()";  break;
-        case spc::SysFunc::Abs: of << "abs()"; break;
-        case spc::SysFunc::Chr: of << "chr()"; break;
-        case spc::SysFunc::Odd: of << "odd()"; break;
-        case spc::SysFunc::Ord: of << "ord()"; break;
-        case spc::SysFunc::Pred: of << "pred()"; break;
-        case spc::SysFunc::Sqr: of << "sqr()"; break;
-        case spc::SysFunc::Sqrt: of << "sqrt()"; break;
-        case spc::SysFunc::Succ: of << "succ()"; break;
+        case SysFunc::Read:   of << "read()"; break;
+        case SysFunc::Write:  of << "write()"; break;
+        case SysFunc::Writeln:of << "writeln()";  break;
+        case SysFunc::Abs: of << "abs()"; break;
+        case SysFunc::Chr: of << "chr()"; break;
+        case SysFunc::Odd: of << "odd()"; break;
+        case SysFunc::Ord: of << "ord()"; break;
+        case SysFunc::Pred: of << "pred()"; break;
+        case SysFunc::Sqr: of << "sqr()"; break;
+        case SysFunc::Sqrt: of << "sqrt()"; break;
+        case SysFunc::Succ: of << "succ()"; break;
     }
     of << "}\n";
     of << "}\n";

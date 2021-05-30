@@ -2,8 +2,13 @@
 #ifndef __ASTVIS__H__
 #define __ASTVIS__H__
 
-#include "utils/ast.hpp"
-
+#include "ast/base.hpp"
+#include "ast/decl.hpp"
+#include "ast/expr.hpp"
+#include "ast/identifier.hpp"
+#include "ast/program.hpp"
+#include "ast/stmt.hpp"
+#include "ast/type.hpp"
 #include <fstream>
 
 namespace spc {
@@ -20,9 +25,7 @@ namespace spc {
         ~ASTvis() = default;
         void travAST(const std::shared_ptr<ProgramNode>& prog);
 
-    
-        //int travProgram(const std::shared_ptr<ProgramNode>& prog);
-private:   
+    private:   
      	int travRoutineBody(const std::shared_ptr<BaseRoutineNode>& prog);
 
         int travCONST(const std::shared_ptr<ConstDeclList>& const_declListAST);
@@ -45,7 +48,6 @@ private:
         int travExpr(const std::shared_ptr<BinaryExprNode>& expr);
         int travExpr(const std::shared_ptr<spc::IdentifierNode>& expr);
         int travExpr(const std::shared_ptr<spc::ConstValueNode>& expr);
-        // int travExpr(const std::shared_ptr<UnaryExprNode>& expr);
         int travExpr(const std::shared_ptr<ArrayRefNode>& expr);
         int travExpr(const std::shared_ptr<RecordRefNode>& expr);
         int travExpr(const std::shared_ptr<ProcNode>& expr);

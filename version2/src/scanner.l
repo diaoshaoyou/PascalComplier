@@ -4,7 +4,13 @@
 #include<string>
 #include<stdexcept>
 #include "parser.hpp"
-#include "utils/ast.hpp"
+#include "ast/base.hpp"
+#include "ast/decl.hpp"
+#include "ast/expr.hpp"
+#include "ast/identifier.hpp"
+#include "ast/program.hpp"
+#include "ast/stmt.hpp"
+#include "ast/type.hpp"
 
 #undef YY_DECL  
 #define YY_DECL int yylex(spc::parser::semantic_type* lval, spc::parser::location_type* loc)
@@ -68,16 +74,7 @@ NQUOTE [^']
 "BEGIN"     {/* std::cout << yytext; */  return token::PBEGIN;}
 "PROCEDURE" {/* std::cout << yytext; */  return token::PROCEDURE;}
 "PROGRAM"   {/* std::cout << yytext; */  return token::PROGRAM;}
-"READLN"      {
-    /* std::cout << yytext; */  
-    yylval->build<spc::SysFunc>(spc::SysFunc::Readln);
-    return token::SYS_PROC;
-}
-"READ"      {
-    /* std::cout << yytext; */  
-    yylval->build<spc::SysFunc>(spc::SysFunc::Read);
-    return token::SYS_PROC;
-}
+
 "REPEAT"    {/* std::cout << yytext; */  return token::REPEAT;}
 "THEN"      {/* std::cout << yytext; */  return token::THEN;}
 "TO"        {
@@ -116,11 +113,7 @@ NQUOTE [^']
     yylval->build<spc::SysFunc>(spc::SysFunc::Chr);
     return token::SYS_FUNCT;
 }
-"CONCAT"       {
-    /* std::cout << yytext; */ 
-    yylval->build<spc::SysFunc>(spc::SysFunc::Concat);
-    return token::SYS_FUNCT;
-}
+
 "LENGTH"       {
     /* std::cout << yytext; */ 
     yylval->build<spc::SysFunc>(spc::SysFunc::Length);
@@ -159,11 +152,6 @@ NQUOTE [^']
 "SUCC"      {
     /* std::cout << yytext; */ 
     yylval->build<spc::SysFunc>(spc::SysFunc::Succ);
-    return token::SYS_FUNCT;
-}
-"VAL"     {
-    /* std::cout << yytext; */ 
-    yylval->build<spc::SysFunc>(spc::SysFunc::Val);
     return token::SYS_FUNCT;
 }
 "WRITE"     {

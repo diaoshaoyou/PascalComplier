@@ -18,7 +18,13 @@
     #include <memory>
     #include <string>
     #include <stdexcept>
-    #include "utils/ast.hpp"
+    #include "ast/base.hpp"
+    #include "ast/decl.hpp"
+    #include "ast/expr.hpp"
+    #include "ast/identifier.hpp"
+    #include "ast/program.hpp"
+    #include "ast/stmt.hpp"
+    #include "ast/type.hpp"
 
     using namespace std;
     namespace spc {}

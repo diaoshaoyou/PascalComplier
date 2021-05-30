@@ -1,6 +1,12 @@
 #ifndef CODEGEN_CONTEXT_H
 #define CODEGEN_CONTEXT_H
-#include "utils/ast.hpp"
+#include "ast/base.hpp"
+#include "ast/decl.hpp"
+#include "ast/expr.hpp"
+#include "ast/identifier.hpp"
+#include "ast/program.hpp"
+#include "ast/stmt.hpp"
+#include "ast/type.hpp"
 
 #include <string>
 #include <fstream>
@@ -114,8 +120,8 @@ namespace spc
             auto sprintfTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context), llvm::Type::getInt8PtrTy(llvm_context)}, true);
             sprintfFunc = llvm::Function::Create(sprintfTy, llvm::Function::ExternalLinkage, "sprintf", *_module);
 
-            auto scanfTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, true);
-            scanfFunc = llvm::Function::Create(scanfTy, llvm::Function::ExternalLinkage, "scanf", *_module);
+            /*auto scanfTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, true);
+            scanfFunc = llvm::Function::Create(scanfTy, llvm::Function::ExternalLinkage, "scanf", *_module);*/
 
             auto absTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt32Ty(llvm_context)}, false);
             absFunc = llvm::Function::Create(absTy, llvm::Function::ExternalLinkage, "abs", *_module);
@@ -129,28 +135,28 @@ namespace spc
             auto strcpyTy = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context), llvm::Type::getInt8PtrTy(llvm_context)}, false);
             strcpyFunc = llvm::Function::Create(strcpyTy, llvm::Function::ExternalLinkage, "strcpy", *_module);
 
-            auto strcatTy = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context), llvm::Type::getInt8PtrTy(llvm_context)}, false);
-            strcatFunc = llvm::Function::Create(strcatTy, llvm::Function::ExternalLinkage, "strcat", *_module);
+           /*auto strcatTy = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context), llvm::Type::getInt8PtrTy(llvm_context)}, false);
+            strcatFunc = llvm::Function::Create(strcatTy, llvm::Function::ExternalLinkage, "strcat", *_module);*/
 
             auto strlenTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, false);
             strlenFunc = llvm::Function::Create(strlenTy, llvm::Function::ExternalLinkage, "strlen", *_module);
 
-            auto atoiTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, false);
-            atoiFunc = llvm::Function::Create(atoiTy, llvm::Function::ExternalLinkage, "atoi", *_module);
+            /*auto atoiTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), {llvm::Type::getInt8PtrTy(llvm_context)}, false);
+            atoiFunc = llvm::Function::Create(atoiTy, llvm::Function::ExternalLinkage, "atoi", *_module);*/
 
             auto getcharTy = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm_context), false);
             getcharFunc = llvm::Function::Create(getcharTy, llvm::Function::ExternalLinkage, "getchar", *_module);
 
             printfFunc->setCallingConv(llvm::CallingConv::C);
             sprintfFunc->setCallingConv(llvm::CallingConv::C);
-            scanfFunc->setCallingConv(llvm::CallingConv::C);
+            //scanfFunc->setCallingConv(llvm::CallingConv::C);
             absFunc->setCallingConv(llvm::CallingConv::C);
             fabsFunc->setCallingConv(llvm::CallingConv::C);
             sqrtFunc->setCallingConv(llvm::CallingConv::C);
             strcpyFunc->setCallingConv(llvm::CallingConv::C);
-            strcatFunc->setCallingConv(llvm::CallingConv::C);
+            //strcatFunc->setCallingConv(llvm::CallingConv::C);
             strlenFunc->setCallingConv(llvm::CallingConv::C);
-            atoiFunc->setCallingConv(llvm::CallingConv::C);
+            //atoiFunc->setCallingConv(llvm::CallingConv::C);
             getcharFunc->setCallingConv(llvm::CallingConv::C);
 
             if (opt)
