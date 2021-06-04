@@ -174,7 +174,9 @@ namespace spc
             int end,
             Type itype
         ) : TypeNode(Type::Array), 
-            range_start(cast_node<ExprNode>(make_node<IntegerNode>(start))), range_end(cast_node<ExprNode>(make_node<IntegerNode>(end))),
+	    range_start(cast_node<ExprNode>(make_node<IntegerNode>(start))), range_end(cast_node<ExprNode>(make_node<IntegerNode>(end))),
+            //range_start(std::dynamic_pointer_cast<ExprNode>(make_node<IntegerNode>(start))), 
+	    //range_end(std::dynamic_pointer_cast<ExprNode>(make_node<IntegerNode>(end))),
             itemType(make_node<SimpleTypeNode>(itype))
         {}
         ~ArrayTypeNode() = default;

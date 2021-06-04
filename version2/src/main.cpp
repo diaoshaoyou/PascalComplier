@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -40,53 +40,19 @@
 #include "ast/program.hpp"
 #include "ast/stmt.hpp"
 #include "ast/type.hpp"
-
+using namespace std;
 extern FILE *yyin;
-std::shared_ptr<spc::ProgramNode> program;
-
-void emit_target(llvm::raw_fd_ostream &dest, llvm::TargetMachine::CodeGenFileType type, llvm::Module &module)
-/*generate target code*/
-{
-    llvm::InitializeAllTargetInfos();
-    llvm::InitializeAllTargets();
-    llvm::InitializeAllTargetMCs();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllAsmPrinters();
-
-    auto target_triple = llvm::sys::getDefaultTargetTriple();
-    module.setTargetTriple(target_triple);
-
-    std::string error;
-    auto target = llvm::TargetRegistry::lookupTarget(target_triple, error);
-    if (!target)
-    { llvm::errs() << error; exit(1); }
-
-    auto cpu = "generic";
-    auto features = "";
-    llvm::TargetOptions opt;
-    auto rm = llvm::Optional<llvm::Reloc::Model>();
-    auto target_machine = target->createTargetMachine(target_triple, cpu, features, opt, rm);
-    module.setDataLayout(target_machine->createDataLayout());
-
-    llvm::legacy::PassManager pass;
-    if (target_machine->addPassesToEmitFile(pass, dest, nullptr, type))
-    {
-        llvm::errs() << "The target machine cannot emit an object file";
-        exit(1);
-    }
-
-    llvm::verifyModule(module, &llvm::errs());
-    pass.run(module);
-
-    dest.flush();
-}
+shared_ptr<spc::ProgramNode> program;
+void Parse();
+void ASTgen();
+string tmpName;
+char *input = nullptr;//input:file to run
 
 int main(int argc, char* argv[])
 {
-    enum Target { UNDEFINED, LLVM, ASM/*, OBJ*/ };
+    enum Target { UNDEFINED, LLVM, ASM };
 
     Target target = Target::UNDEFINED;
-    char *input = nullptr;//input:file to run
     bool opt = false;
 
     /*read in instruction*/
@@ -114,45 +80,13 @@ int main(int argc, char* argv[])
 
     if ((yyin = fopen(input, "r")) == nullptr)
     {
-        std::cerr << "Error: cannot open iutput file" << std::endl;
+        cerr << "Error: cannot open iutput file" << endl;
         exit(1);
     }
+    Parse();/*scan & parse*/   
+    ASTgen();/*generate AST*/ 
 
-    /*scan & parse*/
-    spc::parser pars;
-    try
-    {
-        pars.parse();
-    }
-    catch(const std::invalid_argument& e)
-    {
-        std::cerr << e.what() << std::endl;
-        std::cerr << "Terminated due to error during flexing" << std::endl;
-        exit(1);
-    }
-    catch(const std::logic_error& e)
-    {
-        std::cerr << e.what() << std::endl;
-        std::cerr << "Terminated due to error during parsing" << std::endl;
-        exit(1);
-    }
-
-    std::cout << "Scanning & Parsing completed!" << std::endl;
-    
-    /*generate AST*/ 
-    std::string tmpName=input;
-    tmpName=tmpName.substr(tmpName.rfind('/')+1, tmpName.rfind('.')-tmpName.rfind('/')-1);//file name without postdex
-    std::string astVisName = input;
-    astVisName=astVisName.substr(0, astVisName.rfind('.'));
-    system(("mkdir -p "+astVisName).c_str());//create a new folder
-    astVisName=astVisName.append("/").append(tmpName).append(".tex");//astVisName=XX.tex
-    //std::cout<<"for debug: astVisName="<<astVisName<<std::endl;
-    spc::ASTvis astVis(astVisName);
-    astVis.travAST(program);
-
-    std::cout << "AST verification completed in " << astVisName << std::endl;
-
-    /*generate IR code*/
+    /*generate IR code & target code*/
     spc::CodegenContext genContext("main", opt);
     try 
     {
@@ -160,15 +94,15 @@ int main(int argc, char* argv[])
     } 
     catch (spc::CodegenException &e) 
     {
-        std::cerr << "[CODEGEN ERROR] ";
-        std::cerr << e.what() << std::endl;
-        std::cerr << "Terminated due to error during code generation" << std::endl;
+        cerr << "[CODEGEN ERROR] ";
+        cerr << e.what() << endl;
+        cerr << "Terminated due to error during code generation" << endl;
         if (genContext.log().is_open()) genContext.log().close();
         abort();
     }
-    std::cout << "Code generation completed!" << std::endl;
+    cout << "Code generation completed!" << endl;
 
-    std::string output=input;
+    string output=input;
     output=output.substr(0, output.rfind('.'));
     output=output.append("/").append(tmpName);//eg:    ../test/arr+/+arr+.s
     switch (target)
@@ -177,22 +111,96 @@ int main(int argc, char* argv[])
         case Target::ASM:  output.append(".s");  break;
         default: break;
     }
-    std::error_code ec;
+    error_code ec;
     llvm::raw_fd_ostream fd(output, ec, llvm::sys::fs::F_None);
     if (ec)
     { 
         llvm::errs() << "Could not open file: " << ec.message();
-	std::cout << std::endl; 
+	cout << endl; 
         exit(1); 
     }
 
     switch (target)
     {
-        case Target::LLVM: genContext.getModule()->print(fd, nullptr); break;
-        case Target::ASM: emit_target(fd, llvm::TargetMachine::CGFT_AssemblyFile, *(genContext.getModule())); break;
+        case Target::LLVM: {
+		genContext.getModule()->print(fd, nullptr); 
+		break;
+	}
+        case Target::ASM: {/*generate target code*/
+    		llvm::InitializeAllTargetInfos();
+    		llvm::InitializeAllTargets();
+		llvm::InitializeAllTargetMCs();
+    		llvm::InitializeAllAsmParsers();
+    		llvm::InitializeAllAsmPrinters();
+
+    		llvm::Module &module = *(genContext.getModule());
+    		auto target_triple = llvm::sys::getDefaultTargetTriple();
+    		module.setTargetTriple(target_triple);
+
+    		string e;
+    		auto target = llvm::TargetRegistry::lookupTarget(target_triple, e);
+    		if (!target){
+			llvm::errs() << e; 
+			exit(1);
+		}
+
+    		//auto cpu = "generic";
+    		auto features = "";
+    		llvm::TargetOptions opt;
+    		auto rm = llvm::Optional<llvm::Reloc::Model>();
+    		auto target_machine = target->createTargetMachine(target_triple, "generic", features, opt, rm);
+    		module.setDataLayout(target_machine->createDataLayout());
+
+    		llvm::legacy::PassManager pass;
+    		if (target_machine->addPassesToEmitFile(pass, fd, nullptr, llvm::TargetMachine::CGFT_AssemblyFile)){
+        		llvm::errs() << "The target machine cannot emit an object file";
+        		exit(1);
+    		}
+
+    		llvm::verifyModule(module, &llvm::errs());
+    		pass.run(module);
+
+    		fd.flush();
+		break;
+	}
         default: break;
     }
-    std::cout << "Compile result output: " << output << std::endl;
+    cout << "Compile result output: " << output << endl;
 
     return 0;
+}
+
+void Parse(){/*scan & parse*/
+    spc::parser pars;
+    try
+    {
+        pars.parse();
+    }
+    catch(const invalid_argument& e)
+    {
+        cerr << e.what() << endl;
+        cerr << "Terminated due to error during flexing" << endl;
+        exit(1);
+    }
+    catch(const logic_error& e)
+    {
+        cerr << e.what() << endl;
+        cerr << "Terminated due to error during parsing" << endl;
+        exit(1);
+    }
+
+    cout << "Scanning & Parsing completed!" << endl;
+}
+void ASTgen(){/*generate AST tex*/
+	tmpName=input;
+    	tmpName=tmpName.substr(tmpName.rfind('/')+1, tmpName.rfind('.')-tmpName.rfind('/')-1);//file name without postdex
+    	string astVisName = input;
+    	astVisName=astVisName.substr(0, astVisName.rfind('.'));
+    	system(("mkdir -p "+astVisName).c_str());//create a new folder
+    	astVisName=astVisName.append("/").append(tmpName).append(".tex");//astVisName=XX.tex
+    	//cout<<"for debug: astVisName="<<astVisName<<endl;
+    	spc::ASTvis astVis(astVisName);
+    	astVis.travAST(program);
+
+   	cout << "AST verification completed in " << astVisName << endl;
 }

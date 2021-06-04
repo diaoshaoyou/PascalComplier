@@ -6,13 +6,13 @@
 #include <string>
 
 using namespace spc;
-
+using namespace std;
 void ASTvis::travAST(const std::shared_ptr<ProgramNode>& prog)
 {
 
     of << texHeader;
     of << "\\node {Program: " << prog->getName() << "}\n";
-    travRoutineBody(cast_node<BaseRoutineNode>(prog));
+    travRoutineBody(dynamic_pointer_cast<BaseRoutineNode>(prog));
     of << texTail;
 
     //std::cout << "debug info:\n" << prog->getName() << std::endl;
@@ -189,7 +189,7 @@ int ASTvis::travSubproc(const std::shared_ptr<RoutineNode>& subProc_AST)
         }
     }
     of << "}\n";
-    lines = travRoutineBody(cast_node<BaseRoutineNode>(subProc_AST));
+    lines = travRoutineBody(dynamic_pointer_cast<BaseRoutineNode>(subProc_AST));
     of << "}\n";
     return lines;
 }
@@ -201,39 +201,41 @@ int ASTvis::travCompound(const std::shared_ptr<CompoundStmtNode>& compound_declL
     int tmp = 0, lines = stmtList.size();
     for (auto &p : stmtList) {
         tmp = 0;
-        if (is_ptr_of<IfStmtNode>(p))
+        //if (is_ptr_of<IfStmtNode>(p))
+	if(dynamic_cast<IfStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<IfStmtNode>(p));
+	    tmp += travStmt(dynamic_pointer_cast<IfStmtNode>(p));
+            //tmp += travStmt(cast_node<IfStmtNode>(p));
             // std::cout << "debug info: IF over" << std::endl;
         }
-        else if (is_ptr_of<WhileStmtNode>(p))
+        else if (dynamic_cast<WhileStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<WhileStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<WhileStmtNode>(p));
             // std::cout << "debug info: WHILE over" << std::endl;
         }
-        else if (is_ptr_of<ForStmtNode>(p))
+        else if (dynamic_cast<ForStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<ForStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<ForStmtNode>(p));
             // std::cout << "debug info: FOR over" << std::endl;
         }
-        else if (is_ptr_of<RepeatStmtNode>(p))
+        else if (dynamic_cast<RepeatStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<RepeatStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<RepeatStmtNode>(p));
             // std::cout << "debug info: REPEAT over" << std::endl;
         }
-        else if (is_ptr_of<ProcStmtNode>(p))
+        else if (dynamic_cast<ProcStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<ProcStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<ProcStmtNode>(p));
             // std::cout << "debug info: PROC over" << std::endl;
         }
-        else if (is_ptr_of<AssignStmtNode>(p))
+        else if (dynamic_cast<AssignStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<AssignStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<AssignStmtNode>(p));
             // std::cout << "debug info: ASSIGN over" << std::endl;
         }
-        else if (is_ptr_of<CaseStmtNode>(p))
+        else if (dynamic_cast<CaseStmtNode *>(p.get()) != nullptr)
         {
-            tmp += travStmt(cast_node<CaseStmtNode>(p));
+            tmp += travStmt(dynamic_pointer_cast<CaseStmtNode>(p));
             // std::cout << "debug info: CASE over" << std::endl;
         }
         lines += tmp;
@@ -256,10 +258,13 @@ int ASTvis::travStmt(const std::shared_ptr<CaseStmtNode>&p_stmp)
     for (auto &p : stmtList)
     {
         std::string br;
-        if (is_ptr_of<IntegerNode>(p->branch))
+        if (dynamic_cast<IntegerNode *>((p->branch).get()) != nullptr)
             br = std::to_string(cast_node<IntegerNode>(p->branch)->val);
-        else if (is_ptr_of<IdentifierNode>(p->branch))
+	    //br = to_string((dynamic_pointer_cast<IntegerNode>((p->branch))->val);
+        else if (dynamic_cast<IdentifierNode *>((p->branch).get()) != nullptr)
             br = cast_node<IdentifierNode>(p->branch)->name;
+	    //IdentifierNode* tmp = dynamic_pointer_cast<IdentifierNode>(p->branch);
+	    //br = tmp->name;
         of << "child { node {Case " + br + "}\n";
         tmp = travCompound(p->stmt);
         of << "}\n";
@@ -386,21 +391,27 @@ int ASTvis::travStmt(const std::shared_ptr<AssignStmtNode>&p_stmp)
 int ASTvis::travExpr(const std::shared_ptr<ExprNode>& expr)
 {
     int tmp = 0, lines = 0;
-    if (is_ptr_of<BinaryExprNode>(expr))
-        tmp += travExpr(cast_node<BinaryExprNode>(expr));
-    // tmp += travExpr(cast_node<UnaryExprNode>(expr));
-    else if (is_ptr_of<IdentifierNode>(expr))
-        tmp += travExpr(cast_node<IdentifierNode>(expr));
-    else if (is_ptr_of<ConstValueNode>(expr))
-        tmp += travExpr(cast_node<ConstValueNode>(expr));
-    else if (is_ptr_of<ArrayRefNode>(expr))
-        tmp += travExpr(cast_node<ArrayRefNode>(expr));
-    else if (is_ptr_of<RecordRefNode>(expr))
-        tmp += travExpr(cast_node<RecordRefNode>(expr));
-    else if (is_ptr_of<CustomProcNode>(expr))
-        tmp += travExpr(cast_node<CustomProcNode>(expr));
-    else if (is_ptr_of<SysProcNode>(expr))
-        tmp += travExpr(cast_node<SysProcNode>(expr));
+    if (dynamic_cast<BinaryExprNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<BinaryExprNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<BinaryExprNode>(expr));
+    else if (dynamic_cast<IdentifierNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<IdentifierNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<IdentifierNode>(expr));
+    else if (dynamic_cast<ConstValueNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<ConstValueNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<ConstValueNode>(expr));
+    else if (dynamic_cast<ArrayRefNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<ArrayRefNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<ArrayRefNode>(expr));
+    else if (dynamic_cast<RecordRefNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<RecordRefNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<RecordRefNode>(expr));
+    else if (dynamic_cast<CustomProcNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<CustomProcNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<CustomProcNode>(expr));
+    else if (dynamic_cast<SysProcNode *>(expr.get()) != nullptr)
+        //tmp += travExpr(cast_node<SysProcNode>(expr));
+	tmp += travExpr(dynamic_pointer_cast<SysProcNode>(expr));
     for (int i=0; i<tmp; ++i) of << texNone;
     lines += tmp;
     return lines;
