@@ -1,0 +1,180 @@
+\documentclass{minimal} 
+\usepackage{tikz} 
+
+%%%< 
+\usepackage{verbatim} 
+\usepackage[active,tightpage]{preview} 
+\PreviewEnvironment{tikzpicture} 
+\setlength\PreviewBorder{5pt}% 
+%%%> 
+
+\usetikzlibrary{trees}  
+
+
+\begin{document}
+\tikzstyle{every node}=[draw=black,thick,anchor=west]  
+\tikzstyle{selected}=[draw=red,fill=red!30]            
+\tikzstyle{optional}=[dashed,fill=gray!50]             
+\begin{tikzpicture}[
+    grow via three points={one child at (0.5,-0.7) and   
+    two children at (0.5,-0.7) and (0.5,-1.4)},          
+    edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}  
+]
+\node {Program: main}
+child { node {CONST}
+}
+child { node {TYPE}
+}
+child { node {VAR}
+   child { node {a : INTEGER}}
+   child { node {b : INTEGER}}
+   child { node {c : INTEGER}}
+   child { node {d : REAL}}
+   child { node {e : REAL}}
+   child { node {f : BOOLEAN}}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {PROC or FUNC}
+   child { node {FUNCTION: gcd$ -- $RET$-$TYPE: INTEGER$ -- $PARAMS: a $-$ INTEGERb $-$ INTEGER}
+child { node {CONST}
+}
+child { node {TYPE}
+}
+child { node {VAR}
+}
+child { node {PROC or FUNC}
+}
+child { node {STMT}
+child { node {IF Statment if expr}
+child { node {BINARY: ==}
+child { node {ID: b}
+}
+child { node {Value}
+}
+}
+child [missing] {}
+child [missing] {}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {IF Statment if stmt}
+child { node {ASSIGN Statment}child { node {ID: gcd}
+}
+child { node {ID: a}
+}
+}
+child [missing] {}
+child [missing] {}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {IF Statment else stmt}
+child { node {ASSIGN Statment}child { node {ID: gcd}
+}
+child { node {CustomFunc: gcd}
+}
+}
+child [missing] {}
+child [missing] {}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+   child [missing] {}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {STMT}
+child { node {ASSIGN Statment}child { node {ID: a}
+}
+child { node {Value}
+}
+}
+child [missing] {}
+child [missing] {}
+child { node {ASSIGN Statment}child { node {ID: b}
+}
+child { node {Value}
+}
+}
+child [missing] {}
+child [missing] {}
+child { node {ASSIGN Statment}child { node {ID: c}
+}
+child { node {CustomFunc: gcd}
+}
+}
+child [missing] {}
+child [missing] {}
+child { node {CALL Statment}
+}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+;
+
+\end{tikzpicture}
+\end{document}

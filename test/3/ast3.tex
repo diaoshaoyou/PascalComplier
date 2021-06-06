@@ -1,0 +1,74 @@
+\documentclass{minimal} 
+\usepackage{tikz} 
+
+%%%< 
+\usepackage{verbatim} 
+\usepackage[active,tightpage]{preview} 
+\PreviewEnvironment{tikzpicture} 
+\setlength\PreviewBorder{5pt}% 
+%%%> 
+
+\usetikzlibrary{trees}  
+
+
+\begin{document}
+\tikzstyle{every node}=[draw=black,thick,anchor=west]  
+\tikzstyle{selected}=[draw=red,fill=red!30]            
+\tikzstyle{optional}=[dashed,fill=gray!50]             
+\begin{tikzpicture}[
+    grow via three points={one child at (0.5,-0.7) and   
+    two children at (0.5,-0.7) and (0.5,-1.4)},          
+    edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}  
+]
+\node {Program: main}
+child { node {CONST}
+   child { node {a : INTEGER}}
+   child { node {b : REAL}}
+   child { node {zero : INTEGER}}
+   child { node {ss : STRING}}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {TYPE}
+}
+child { node {VAR}
+   child { node {a : INTEGER}}
+   child { node {b : INTEGER}}
+   child { node {c : ERROR}}
+   child { node {s : STRING}}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child { node {PROC or FUNC}
+}
+child { node {STMT}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+child { node {CALL Statment}
+}
+}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+child [missing] {}
+;
+
+\end{tikzpicture}
+\end{document}
